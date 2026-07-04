@@ -1,0 +1,65 @@
+import { ApiError } from '../services/BaseApiService';
+
+/**
+ * Formats error details array into a readable string
+ * @param details - Array of error detail messages
+ * @returns Formatted error details string
+ */
+export const formatErrorDetails = (details: string[]): string => {
+  if (details.length === 0) return '';
+  if (details.length === 1) return details[0];
+  return details.join('; ');
+};
+
+/**
+ * Extracts the most relevant error message from an error object
+ * @param err - Error object (can be ApiError or generic Error)
+ * @param context - Optional context to prepend to the error message
+ * @returns Formatted error message string
+ */
+export const extractErrorMessage = (err: unknown, context?: string): string => {
+  let errorMessage: string;
+  
+  // Handle ApiError with details
+  if (err instanceof ApiError) {
+    errorMessage = err.details && err.details.length > 0
+      ? `${err.errorType}: ${formatErrorDetails(err.details)}`
+      : err.message;
+  } else {
+    // Handle generic errors
+    errorMessage = err instanceof Error ? err.message : 'Unknown error';
+  }
+  
+  // Add context if provided
+  if (context) {
+    errorMessage = `${context}: ${errorMessage}`;
+  }
+  
+  return errorMessage;
+};
+
+/**
+ * Handles ApiError and returns a user-friendly error message
+ * @param err - Error object to handle
+ * @param fieldName - Optional field name for field-specific errors
+ * @returns Formatted error message for display
+ */
+export const handleApiError = (err: unknown, fieldName?: string): string => {
+  if (err instanceof ApiError) {
+    if (err.details && err.details.length > 0) {
+      const details = formatErrorDetails(err.details);
+      return fieldName 
+        ? `Failed to update ${fieldName}: ${err.errorType}: ${details}`
+        : `${err.errorType}: ${details}`;
+    }
+    return fieldName 
+      ? `Failed to update ${fieldName}: ${err.message}`
+      : err.message;
+  }
+  
+  // Handle generic errors
+  const message = err instanceof Error ? err.message : 'Unknown error';
+  return fieldName 
+    ? `Failed to update ${fieldName}: ${message}`
+    : message;
+};

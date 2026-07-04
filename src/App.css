@@ -1,0 +1,286 @@
+/* Minimal, dependency-free styles for the Account page */
+
+:root {
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --border: #e5e7eb;
+  --muted: #6b7280;
+  --text: #0f172a;
+}
+
+body {
+  background: var(--bg);
+  display: block; /* override Vite template centering */
+}
+
+#root {
+  width: 100%;
+}
+
+.account-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.account-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 24px 40px 24px;
+  width: 100%;
+}
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 16px;
+  width: 100%;
+  max-width: 1040px;
+}
+
+.card {
+  background: var(--panel);
+  border-radius: 10px;
+  border: 1px solid transparent; /* visually no border, consistent with screenshot */
+  box-shadow: none;
+}
+
+.card-header {
+  padding: 20px 24px 12px 24px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.dot-orange { background: #f97316; }
+.dot-green { background: #22c55e; }
+.dot-blue { background: #3b82f6; }
+.dot-slate { background: #475569; }
+
+.card-content { padding: 0 24px 16px 24px; }
+
+.info-list { display: block; }
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 8px;
+}
+
+.info-row.no-border { border-bottom: none; }
+
+.label {
+  font-size: 12px;
+  color: #64748b; /* slate-500 */
+}
+
+.value {
+  font-size: 12px;
+  color: #0f172a; /* slate-900 */
+}
+
+.value-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.border-bottom {
+  height: 1px;
+  background-color: var(--border);
+}
+
+/* Responsive: stack to single column under ~960px */
+@media (max-width: 960px) {
+  .account-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--text);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container h2 {
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.error-container p {
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.error-container button {
+  background: var(--text);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 1rem;
+  font-size: 14px;
+}
+
+.error-container button:hover {
+  background: #1e293b;
+}
+
+/* Edit Mode Styles */
+.info-row.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.info-row.clickable:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+.edit-indicator {
+  font-size: 12px;
+  margin-left: 8px;
+  opacity: 0.6;
+}
+
+.info-row.clickable:hover .edit-indicator {
+  opacity: 1;
+}
+
+.info-row.editing {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-radius: 6px;
+}
+
+.edit-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.edit-controls input,
+.edit-controls select {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  min-width: 120px;
+  background: white;
+}
+
+.edit-controls input:focus,
+.edit-controls select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.save-btn,
+.cancel-btn {
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-btn {
+  background: #22c55e;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #16a34a;
+}
+
+.save-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.save-btn:disabled[title*="empty"] {
+  background: #fbbf24;
+  color: #92400e;
+}
+
+.cancel-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+.cancel-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.edit-error {
+  color: #dc2626;
+  font-size: 11px;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Responsive adjustments for edit mode */
+@media (max-width: 960px) { 
+  .edit-controls input,
+  .edit-controls select {
+    min-width: auto;
+  }
+}
