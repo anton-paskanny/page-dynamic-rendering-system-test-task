@@ -38,7 +38,7 @@ shared/        # Types/constants shared between frontend and server
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 20.19+ or 22.12+ (required by Vite 7 - see `engines` in `package.json`)
 - npm
 
 ## Running Locally
@@ -66,7 +66,7 @@ Open `http://localhost:5173`. Editable fields (marked with a pencil icon) can be
 - `GET /api/layouts/account` — layout JSON for the Account page
 - `GET /api/accounts/:id` — account data
 - `PATCH /api/accounts/:id` — update editable account fields
-- `GET /health` — server health check
+- `GET /api/health` — server health check
 
 See [README_BFF.md](./README_BFF.md) for request/response examples and validation rules, or run `./test-bff.sh` (server must already be running) to exercise all endpoints.
 

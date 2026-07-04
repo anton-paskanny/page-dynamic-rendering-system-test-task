@@ -8,7 +8,7 @@ echo "=========================="
 
 # Test health endpoint
 echo -e "\n1. Testing Health Endpoint:"
-curl -s http://localhost:3001/health | jq '.' 2>/dev/null || curl -s http://localhost:3001/health
+curl -s http://localhost:3001/api/health | jq '.' 2>/dev/null || curl -s http://localhost:3001/api/health
 
 # Test layout endpoint
 echo -e "\n2. Testing Layout Endpoint:"

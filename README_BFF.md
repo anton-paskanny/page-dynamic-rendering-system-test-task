@@ -16,7 +16,7 @@ Phase 2 implements a Backend for Frontend (BFF) that serves the JSON layout conf
 
 #### 1. Health Check
 ```
-GET /health
+GET /api/health
 ```
 Returns server status and timestamp.
 
@@ -50,7 +50,7 @@ Accepts updates for editable fields on the page.
 ## Running the Application
 
 ### Prerequisites
-- Node.js version 18 or higher
+- Node.js 20.19+ or 22.12+ (required by Vite 7)
 - npm or yarn package manager
 
 ### 1. Install Dependencies
@@ -82,7 +82,7 @@ The frontend will start on `http://localhost:5173`
 
 ### Health Check
 ```bash
-curl http://localhost:3001/health
+curl http://localhost:3001/api/health
 ```
 
 ### Get Layout Configuration
@@ -215,6 +215,6 @@ The `ApiService` class provides a clean interface for all BFF communication:
    - Ensure all dependencies are installed
 
 3. **Frontend Can't Connect to BFF**
-   - Verify BFF server is running (`curl http://localhost:3001/health`)
+   - Verify BFF server is running (`curl http://localhost:3001/api/health`)
    - Check browser console for CORS errors
    - Ensure API_BASE_URL in `src/services/api.ts` matches server port

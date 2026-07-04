@@ -1,16 +1,15 @@
 import React from 'react';
-import type { Block as BlockType, AccountData } from '../types/layout';
+import type { Block as BlockType, AccountData, Field } from '../types/layout';
 import { BlockColor } from '../types/layout';
 import { EditableField } from './EditableField';
 
 interface BlockProps {
   block: BlockType;
-  accountId: string;
   accountData: AccountData;
-  onFieldUpdate: (fieldId: string, newValue: string | number | boolean) => Promise<void>;
+  onFieldUpdate: (field: Field, newValue: string | number | boolean) => Promise<void>;
 }
 
-export const Block: React.FC<BlockProps> = ({ block, accountId, accountData, onFieldUpdate }) => {
+export const Block: React.FC<BlockProps> = ({ block, accountData, onFieldUpdate }) => {
   const getDotClass = (color: BlockColor) => {
     switch (color) {
       case BlockColor.ORANGE: return 'dot-orange';
@@ -35,9 +34,8 @@ export const Block: React.FC<BlockProps> = ({ block, accountId, accountData, onF
             <div key={field.id}>
               <EditableField
                 field={field}
-                accountId={accountId}
-                currentValue={accountData[field.id] || field.value}
-                onUpdate={onFieldUpdate}
+                currentValue={accountData[field.id] ?? field.value}
+                onSave={onFieldUpdate}
               />
               {index < block.fields.length - 1 && <div className="border-bottom" />}
             </div>

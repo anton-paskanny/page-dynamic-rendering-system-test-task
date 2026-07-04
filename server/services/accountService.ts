@@ -52,35 +52,16 @@ export const updateAccountData = (id: string, updates: Partial<AccountData>): Ac
   if (!account) {
     return undefined;
   }
-  
+
   // Create a new account object with updates
   const updatedAccount: AccountData = {
     ...account,
     ...updates,
     id // Ensure ID cannot be changed
   };
-  
+
   // Store the updated account
   accounts.set(id, updatedAccount);
-  
+
   return updatedAccount;
-};
-
-export const getAllAccounts = (): AccountData[] => {
-  return Array.from(accounts.values());
-};
-
-export const createAccount = (accountData: Omit<AccountData, 'id'>): AccountData => {
-  const id = Date.now().toString();
-  const newAccount: AccountData = {
-    ...accountData,
-    id
-  };
-  
-  accounts.set(id, newAccount);
-  return newAccount;
-};
-
-export const deleteAccount = (id: string): boolean => {
-  return accounts.delete(id);
 };

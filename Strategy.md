@@ -115,7 +115,7 @@ Implemented a registry of field types:
 - **Text Fields**: Standard input with validation
 - **Number Fields**: Numeric input with range validation
 - **Select Fields**: Dropdown with predefined options
-- **Boolean Fields**: Read-only (not editable)
+- **Boolean Fields**: Read-only by design (not editable) - enforced server-side by validation, not just omitted from the edit UI
 
 #### 3. User Interaction
 - **Click to Edit**: Visual indicators show editable fields
@@ -166,11 +166,21 @@ Implemented a registry of field types:
 
 ## Future Extensibility
 
-### 1. Constructor (Phase 4)
-- **Layout Structure**: Supports drag-and-drop reordering
-- **Block and Field Arrays**: Can be manipulated via API
-- **JSON Structure**: Designed for visual editing
-- **Edit Mode Ready**: Current editing system extends to layout construction
+### 1. Phase 4 - Constructor (Proposed, Not Implemented)
+
+This phase has not been built. The design below is a concrete proposal so the remaining scope/effort is clear to a reviewer.
+
+**Backend**
+- Wire up the already-existing but unused `updateLayout()` in `server/services/layoutService.ts` behind a new `PUT /api/layouts/account` route in `server/routes/layouts.ts`.
+- Add a structural validator for the incoming layout (blocks array shape, required field properties, unique block/field ids) mirroring the pattern already used in `server/validation/accountValidation.ts`.
+
+**Frontend**
+- A new `Constructor` page. The app currently has no router (a single `<App>`); the smallest addition is either a `react-router` route or a simple view-toggle in `App.tsx`.
+- The Constructor loads the layout via the existing `LayoutService`, and lets an admin: reorder fields within a block, move fields across blocks, reorder blocks, add new/custom fields, rename blocks, and toggle field/block visibility.
+- Changes save via the new `PUT /api/layouts/account` endpoint; the Account page picks them up on reload since it already fetches the layout fresh from the BFF.
+
+**Drag and drop**
+- Recommend `@dnd-kit/core` + `@dnd-kit/sortable` over `react-beautiful-dnd` (unmaintained) or raw HTML5 drag-and-drop (weaker accessibility/keyboard support). `dnd-kit` is actively maintained and works well with React 19.
 
 ### 2. Advanced Features
 - **Bulk Updates**: Multiple field updates in single request

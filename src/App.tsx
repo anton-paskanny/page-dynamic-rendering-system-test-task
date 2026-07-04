@@ -4,8 +4,9 @@ import { Toaster, toast } from 'react-hot-toast';
 import { AccountPage } from './components/AccountPage';
 import { LayoutService } from './services/LayoutService';
 import { AccountService } from './services/AccountService';
-import { extractErrorMessage } from './utils/errorHandler';
-import type { Layout, AccountData } from './types/layout';
+import { formatError } from './utils/errorHandler';
+import { TOAST_OPTIONS } from './constants/toast';
+import type { Layout, AccountData, Field } from './types/layout';
 
 export default function App() {
   const [layout, setLayout] = useState<Layout | null>(null);
@@ -36,8 +37,8 @@ export default function App() {
         toast.success('Account data loaded successfully!');
       } catch (err) {
         // Use the shared error handling helper
-        const errorMessage = extractErrorMessage(err, 'Failed to load data');
-        
+        const errorMessage = formatError(err, 'Failed to load data');
+
         setError(errorMessage);
         toast.error(errorMessage);
         console.error('Error fetching data:', err);
@@ -49,20 +50,28 @@ export default function App() {
     fetchData();
   }, []);
 
-  const handleFieldUpdate = async (fieldId: string, newValue: string | number | boolean) => {
-    if (accountData) {
-      // Optimistic update
-      setAccountData(prev => prev ? { ...prev, [fieldId]: newValue } : null);
+  const handleFieldUpdate = async (field: Field, newValue: string | number | boolean) => {
+    if (!accountData) {
+      return;
+    }
 
-      try {
-        // Refresh account data from backend to ensure consistency
-        const refreshedAccountData = await AccountService.getAccount('1');
-        setAccountData(refreshedAccountData);
-      } catch (err) {
-        console.error('Failed to refresh account data:', err);
-        // If refresh fails, we keep the optimistic update
-        // The user will see their change, but it might not be fully synced
-      }
+    const previousValue = accountData[field.id];
+
+    // Optimistic update - the UI reflects the change before the server confirms it
+    setAccountData(prev => (prev ? { ...prev, [field.id]: newValue } : prev));
+
+    const loadingToast = toast.loading(`Saving ${field.label}...`);
+
+    try {
+      const updatedAccount = await AccountService.updateAccount(accountData.id, { [field.id]: newValue });
+      setAccountData(updatedAccount);
+      toast.success(`${field.label} updated successfully!`);
+    } catch (err) {
+      // Roll back to the previous value on failure
+      setAccountData(prev => (prev ? { ...prev, [field.id]: previousValue } : prev));
+      toast.error(formatError(err, `Failed to update ${field.label}`));
+    } finally {
+      toast.dismiss(loadingToast);
     }
   };
 
@@ -99,30 +108,7 @@ export default function App() {
 
   return (
     <>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#363636',
-            color: '#fff',
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: '#22c55e',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            duration: 5000,
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
+      <Toaster position="top-right" toastOptions={TOAST_OPTIONS} />
       <AccountPage
         layout={layout}
         accountData={accountData}

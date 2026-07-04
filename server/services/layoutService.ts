@@ -14,8 +14,8 @@ const initializeLayouts = () => {
         color: BlockColor.ORANGE,
         fields: [
           { id: 'created-on', label: 'Created On', value: '5/25/2024', type: 'string', editable: false },
-          { id: 'lead-status', label: 'Lead Status', value: 'New', type: 'string', editable: true },
-          { id: 'account-status', label: 'Account Status', value: 'Real', type: 'string', editable: true },
+          { id: 'lead-status', label: 'Lead Status', value: 'New', type: 'select', options: ['New', 'Qualified', 'Proposal', 'Negotiation', 'Closed'], editable: true },
+          { id: 'account-status', label: 'Account Status', value: 'Real', type: 'select', options: ['Real', 'Demo', 'Test'], editable: true },
           { id: 'ftd-exists', label: 'FTD Exists', value: 'Yes', type: 'boolean', editable: false },
           { id: 'ftd-date', label: 'FTD Date', value: '09/12/2024', type: 'string', editable: false },
           { id: 'ftd-amount', label: 'FTD Amount', value: '$250', type: 'string', editable: false },
@@ -77,15 +77,9 @@ export const getLayout = (layoutType: string): Layout | undefined => {
   return layouts.get(layoutType);
 };
 
+// Not yet wired to a route - reserved for the proposed Phase 4 Constructor
+// (PUT /api/layouts/account). See Strategy.md.
 export const updateLayout = (layoutType: string, layout: Layout): Layout => {
   layouts.set(layoutType, layout);
   return layout;
-};
-
-export const getAllLayouts = (): Map<string, Layout> => {
-  return new Map(layouts);
-};
-
-export const deleteLayout = (layoutType: string): boolean => {
-  return layouts.delete(layoutType);
 };

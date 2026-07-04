@@ -17,9 +17,9 @@ export const formatErrorDetails = (details: string[]): string => {
  * @param context - Optional context to prepend to the error message
  * @returns Formatted error message string
  */
-export const extractErrorMessage = (err: unknown, context?: string): string => {
+export const formatError = (err: unknown, context?: string): string => {
   let errorMessage: string;
-  
+
   // Handle ApiError with details
   if (err instanceof ApiError) {
     errorMessage = err.details && err.details.length > 0
@@ -29,37 +29,11 @@ export const extractErrorMessage = (err: unknown, context?: string): string => {
     // Handle generic errors
     errorMessage = err instanceof Error ? err.message : 'Unknown error';
   }
-  
+
   // Add context if provided
   if (context) {
     errorMessage = `${context}: ${errorMessage}`;
   }
-  
-  return errorMessage;
-};
 
-/**
- * Handles ApiError and returns a user-friendly error message
- * @param err - Error object to handle
- * @param fieldName - Optional field name for field-specific errors
- * @returns Formatted error message for display
- */
-export const handleApiError = (err: unknown, fieldName?: string): string => {
-  if (err instanceof ApiError) {
-    if (err.details && err.details.length > 0) {
-      const details = formatErrorDetails(err.details);
-      return fieldName 
-        ? `Failed to update ${fieldName}: ${err.errorType}: ${details}`
-        : `${err.errorType}: ${details}`;
-    }
-    return fieldName 
-      ? `Failed to update ${fieldName}: ${err.message}`
-      : err.message;
-  }
-  
-  // Handle generic errors
-  const message = err instanceof Error ? err.message : 'Unknown error';
-  return fieldName 
-    ? `Failed to update ${fieldName}: ${message}`
-    : message;
+  return errorMessage;
 };

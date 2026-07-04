@@ -20,6 +20,8 @@ export type BlockColor = typeof BlockColor[keyof typeof BlockColor];
 export interface Field {
   id: string;
   label: string;
+  // Default value used only when the account data has no entry for this field id.
+  // Not a fallback for existing fields - real account data always takes precedence.
   value: string | number | boolean;
   type: FieldType;
   options?: string[]; // For select fields
@@ -41,10 +43,4 @@ export interface Layout {
 export interface AccountData {
   id: string;
   [key: string]: string | number | boolean;
-}
-
-// Interface for field updates
-export interface FieldUpdate {
-  fieldId: string;
-  value: string | number | boolean;
 }

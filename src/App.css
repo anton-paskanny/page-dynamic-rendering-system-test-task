@@ -6,6 +6,20 @@
   --border: #e5e7eb;
   --muted: #6b7280;
   --text: #0f172a;
+  --success: #22c55e;
+  --success-dark: #16a34a;
+  --error: #ef4444;
+  --error-dark: #dc2626;
+  --warning-bg: #fbbf24;
+  --warning-text: #92400e;
+  --disabled-bg: #9ca3af;
+  --dot-orange: #f97316;
+  --dot-blue: #3b82f6;
+  --dot-slate: #475569;
+  --label-color: #64748b;
+  --text-hover: #1e293b;
+  --focus-blue-tint-light: rgba(59, 130, 246, 0.05);
+  --focus-blue-tint: rgba(59, 130, 246, 0.1);
 }
 
 body {
@@ -70,10 +84,10 @@ body {
   border-radius: 999px;
   display: inline-block;
 }
-.dot-orange { background: #f97316; }
-.dot-green { background: #22c55e; }
-.dot-blue { background: #3b82f6; }
-.dot-slate { background: #475569; }
+.dot-orange { background: var(--dot-orange); }
+.dot-green { background: var(--success); }
+.dot-blue { background: var(--dot-blue); }
+.dot-slate { background: var(--dot-slate); }
 
 .card-content { padding: 0 24px 16px 24px; }
 
@@ -91,12 +105,12 @@ body {
 
 .label {
   font-size: 12px;
-  color: #64748b; /* slate-500 */
+  color: var(--label-color);
 }
 
 .value {
   font-size: 12px;
-  color: #0f172a; /* slate-900 */
+  color: var(--text);
 }
 
 .value-mono {
@@ -143,7 +157,7 @@ body {
 }
 
 .error-container h2 {
-  color: #dc2626;
+  color: var(--error-dark);
   margin-bottom: 1rem;
 }
 
@@ -164,7 +178,7 @@ body {
 }
 
 .error-container button:hover {
-  background: #1e293b;
+  background: var(--text-hover);
 }
 
 /* Edit Mode Styles */
@@ -174,7 +188,7 @@ body {
 }
 
 .info-row.clickable:hover {
-  background-color: rgba(59, 130, 246, 0.05);
+  background-color: var(--focus-blue-tint-light);
 }
 
 .edit-indicator {
@@ -188,7 +202,7 @@ body {
 }
 
 .info-row.editing {
-  background-color: rgba(59, 130, 246, 0.1);
+  background-color: var(--focus-blue-tint);
   border-radius: 6px;
 }
 
@@ -213,8 +227,8 @@ body {
 .edit-controls input:focus,
 .edit-controls select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  border-color: var(--dot-blue);
+  box-shadow: 0 0 0 2px var(--focus-blue-tint);
 }
 
 .edit-actions {
@@ -238,40 +252,40 @@ body {
 }
 
 .save-btn {
-  background: #22c55e;
+  background: var(--success);
   color: white;
 }
 
 .save-btn:hover:not(:disabled) {
-  background: #16a34a;
+  background: var(--success-dark);
 }
 
 .save-btn:disabled {
-  background: #9ca3af;
+  background: var(--disabled-bg);
   cursor: not-allowed;
 }
 
 .save-btn:disabled[title*="empty"] {
-  background: #fbbf24;
-  color: #92400e;
+  background: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 .cancel-btn {
-  background: #ef4444;
+  background: var(--error);
   color: white;
 }
 
 .cancel-btn:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--error-dark);
 }
 
 .cancel-btn:disabled {
-  background: #9ca3af;
+  background: var(--disabled-bg);
   cursor: not-allowed;
 }
 
 .edit-error {
-  color: #dc2626;
+  color: var(--error-dark);
   font-size: 11px;
   margin-top: 4px;
   text-align: right;

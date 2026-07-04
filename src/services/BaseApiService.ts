@@ -1,5 +1,8 @@
 import { API_CONFIG } from '../../shared/constants/api';
 
+// Overridable at build time via VITE_API_BASE_URL; falls back to the local BFF default.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? API_CONFIG.BASE_URL;
+
 // Custom error class for API errors with details
 export class ApiError extends Error {
   public status: number;
@@ -17,7 +20,7 @@ export class ApiError extends Error {
 
 export abstract class BaseApiService {
   protected static async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}${endpoint}`, {
+    const response = await fetch(`${API_BASE_URL}${API_CONFIG.API_PREFIX}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
         ...options?.headers,

@@ -15,17 +15,6 @@ export const API_ROUTES = {
   HEALTH: '/health',
 } as const;
 
-// Full API endpoints for frontend use
-export const API_ENDPOINTS = {
-  LAYOUTS: {
-    ACCOUNT: `${API_CONFIG.API_PREFIX}${API_ROUTES.LAYOUTS.ACCOUNT}`,
-  },
-  ACCOUNTS: {
-    BY_ID: (id: string) => `${API_CONFIG.API_PREFIX}${API_ROUTES.ACCOUNTS.BY_ID(id)}`,
-  },
-  HEALTH: `${API_CONFIG.API_PREFIX}${API_ROUTES.HEALTH}`,
-} as const;
-
 // Backend route paths (without /api prefix)
 export const BACKEND_ROUTES = {
   LAYOUTS: '/layouts',
