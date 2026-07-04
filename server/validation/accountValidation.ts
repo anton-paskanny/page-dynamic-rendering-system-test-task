@@ -1,5 +1,6 @@
 import { getLayout } from '../services/layoutService';
 import type { Field } from '../../shared/types/layout';
+import { FieldType } from '../../shared/types/layout';
 
 interface ValidationResult {
   isValid: boolean;
@@ -20,6 +21,8 @@ interface NumberConstraints {
   max?: number;
 }
 
+const PHONE_PATTERN = /^\d{6,15}$/;
+
 // Constraints that aren't expressible in the layout schema (regex/length/range).
 // Editability and allowed values for select fields are derived from the layout itself
 // (server/services/layoutService.ts) so the two never drift out of sync.
@@ -29,9 +32,9 @@ const stringConstraints: Record<string, StringConstraints> = {
   'email': { pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
   'phone1-country-code': { pattern: /^\+\d{1,4}$/ },
   'phone1-area-code': { pattern: /^\d{1,5}$/ },
-  'primary-phone': { pattern: /^\d{6,15}$/ },
-  'secondary-phone': { pattern: /^\d{6,15}$/ },
-  'mobile-phone': { pattern: /^\d{6,15}$/ },
+  'primary-phone': { pattern: PHONE_PATTERN },
+  'secondary-phone': { pattern: PHONE_PATTERN },
+  'mobile-phone': { pattern: PHONE_PATTERN },
   'assigned-agent': { maxLength: 100 },
   'affiliate': { maxLength: 100 },
   'sub-affiliate': { maxLength: 100 },
@@ -87,7 +90,7 @@ export const validateAccountUpdate = (updates: AccountUpdate): ValidationResult 
       continue;
     }
 
-    if (field.type === 'string' || field.type === 'select') {
+    if (field.type === FieldType.STRING || field.type === FieldType.SELECT) {
       if (typeof value !== 'string') {
         errors.push(`Field '${fieldName}' must be a string`);
         continue;
@@ -107,7 +110,7 @@ export const validateAccountUpdate = (updates: AccountUpdate): ValidationResult 
       if (field.options && !field.options.includes(value)) {
         errors.push(`Field '${fieldName}' must be one of: ${field.options.join(', ')}`);
       }
-    } else if (field.type === 'number') {
+    } else if (field.type === FieldType.NUMBER) {
       if (typeof value !== 'number') {
         errors.push(`Field '${fieldName}' must be a number`);
         continue;
@@ -122,7 +125,7 @@ export const validateAccountUpdate = (updates: AccountUpdate): ValidationResult 
       if (constraints?.max !== undefined && value > constraints.max) {
         errors.push(`Field '${fieldName}' must be at most ${constraints.max}`);
       }
-    } else if (field.type === 'boolean') {
+    } else if (field.type === FieldType.BOOLEAN) {
       // Boolean fields are read-only by design - see Strategy.md
       errors.push(`Field '${fieldName}' is not editable`);
       continue;

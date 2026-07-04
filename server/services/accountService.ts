@@ -1,12 +1,14 @@
 import type { AccountData } from '../../shared/types/layout';
 
+export const DEFAULT_ACCOUNT_ID = '1';
+
 // In-memory storage for account data
 const accounts = new Map<string, AccountData>();
 
 // Initialize with mock data
 const initializeAccounts = () => {
   const mockAccount: AccountData = {
-    id: '1',
+    id: DEFAULT_ACCOUNT_ID,
     'created-on': '5/25/2024',
     'lead-status': 'New',
     'account-status': 'Real',
@@ -37,7 +39,7 @@ const initializeAccounts = () => {
     'mobile-phone': '849785121'
   };
   
-  accounts.set('1', mockAccount);
+  accounts.set(DEFAULT_ACCOUNT_ID, mockAccount);
 };
 
 // Initialize accounts on module load

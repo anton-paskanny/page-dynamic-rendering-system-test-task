@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { getLayout } from '../services/layoutService';
+import { sendNotFound, sendServerError } from '../utils/httpErrors';
 
 const router = Router();
 
@@ -7,21 +8,15 @@ const router = Router();
 router.get('/account', (req, res) => {
   try {
     const layout = getLayout('account');
-    
+
     if (!layout) {
-      return res.status(404).json({
-        error: 'Layout not found',
-        message: 'No layout found for account page'
-      });
+      return sendNotFound(res, 'Layout not found', 'No layout found for account page');
     }
-    
+
     res.json(layout);
   } catch (error) {
     console.error('Error fetching layout:', error);
-    res.status(500).json({
-      error: 'Internal server error',
-      message: 'Failed to fetch layout data'
-    });
+    sendServerError(res, 'Failed to fetch layout data');
   }
 });
 
