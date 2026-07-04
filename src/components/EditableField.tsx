@@ -123,6 +123,7 @@ export const EditableField: FC<EditableFieldProps> = ({ field, currentValue, onS
               className="save-btn"
               onClick={handleSave}
               disabled={isEmpty}
+              data-empty={isEmpty}
               title={isEmpty ? "Cannot save empty value" : "Save"}
               aria-label={`Save changes to ${field.label}`}
             >

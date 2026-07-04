@@ -1,4 +1,6 @@
-// Shared types for both frontend and backend
+// Shared types for both frontend and backend.
+// Nothing in shared/ may import from src/ or server/ (enforced by the
+// no-restricted-imports rule in eslint.config.js) - it must stay usable by both.
 export const FieldType = {
   STRING: 'string',
   NUMBER: 'number',

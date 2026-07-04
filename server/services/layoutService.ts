@@ -1,6 +1,7 @@
 import type { Layout } from '../../shared/types/layout';
 import { BlockColor, FieldType } from '../../shared/types/layout';
-import { getAccountData, DEFAULT_ACCOUNT_ID } from './accountService';
+import { DEFAULT_ACCOUNT_ID } from '../../shared/constants/account';
+import { getAccountData } from './accountService';
 
 type LayoutType = 'account';
 

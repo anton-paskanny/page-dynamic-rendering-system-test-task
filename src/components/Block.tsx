@@ -9,22 +9,19 @@ interface BlockProps {
   onFieldUpdate: (field: Field, newValue: string | number | boolean) => Promise<void>;
 }
 
-export const Block: React.FC<BlockProps> = ({ block, accountData, onFieldUpdate }) => {
-  const getDotClass = (color: BlockColor) => {
-    switch (color) {
-      case BlockColor.ORANGE: return 'dot-orange';
-      case BlockColor.GREEN: return 'dot-green';
-      case BlockColor.SLATE: return 'dot-slate';
-      case BlockColor.BLUE: return 'dot-blue';
-      default: return 'dot-slate';
-    }
-  };
+const DOT_CLASS_BY_COLOR: Record<BlockColor, string> = {
+  [BlockColor.ORANGE]: 'dot-orange',
+  [BlockColor.GREEN]: 'dot-green',
+  [BlockColor.SLATE]: 'dot-slate',
+  [BlockColor.BLUE]: 'dot-blue',
+};
 
+export const Block: React.FC<BlockProps> = ({ block, accountData, onFieldUpdate }) => {
   return (
     <section className="card">
       <header className="card-header">
         <h2 className="card-title">
-          <span className={`dot ${getDotClass(block.color)}`} />
+          <span className={`dot ${DOT_CLASS_BY_COLOR[block.color]}`} />
           {block.title}
         </h2>
       </header>

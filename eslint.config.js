@@ -20,4 +20,19 @@ export default tseslint.config([
       globals: globals.browser,
     },
   },
+  {
+    // shared/ is consumed by both the frontend and the BFF, so it must stay
+    // framework/runtime agnostic - it may not reach into either side.
+    files: ['shared/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['**/src/**', '**/server/**'],
+            message: 'shared/ must not import from src/ or server/ - it is consumed by both and must stay framework/runtime agnostic.',
+          },
+        ],
+      }],
+    },
+  },
 ])

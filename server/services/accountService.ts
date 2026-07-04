@@ -1,6 +1,5 @@
 import type { AccountData } from '../../shared/types/layout';
-
-export const DEFAULT_ACCOUNT_ID = '1';
+import { DEFAULT_ACCOUNT_ID } from '../../shared/constants/account';
 
 // In-memory storage for account data
 const accounts = new Map<string, AccountData>();

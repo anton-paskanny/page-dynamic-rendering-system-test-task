@@ -101,8 +101,6 @@ body {
   padding: 0 8px;
 }
 
-.info-row.no-border { border-bottom: none; }
-
 .label {
   font-size: 12px;
   color: var(--label-color);
@@ -111,10 +109,6 @@ body {
 .value {
   font-size: 12px;
   color: var(--text);
-}
-
-.value-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .border-bottom {
@@ -265,7 +259,7 @@ body {
   cursor: not-allowed;
 }
 
-.save-btn:disabled[title*="empty"] {
+.save-btn:disabled[data-empty="true"] {
   background: var(--warning-bg);
   color: var(--warning-text);
 }
@@ -282,13 +276,6 @@ body {
 .cancel-btn:disabled {
   background: var(--disabled-bg);
   cursor: not-allowed;
-}
-
-.edit-error {
-  color: var(--error-dark);
-  font-size: 11px;
-  margin-top: 4px;
-  text-align: right;
 }
 
 /* Responsive adjustments for edit mode */

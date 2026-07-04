@@ -6,6 +6,7 @@ import { LayoutService } from './services/LayoutService';
 import { AccountService } from './services/AccountService';
 import { formatError } from './utils/errorHandler';
 import { TOAST_OPTIONS } from './constants/toast';
+import { DEFAULT_ACCOUNT_ID } from '../shared/constants/account';
 import type { Layout, AccountData, Field } from './types/layout';
 
 export default function App() {
@@ -26,7 +27,7 @@ export default function App() {
         // Fetch both layout and account data in parallel
         const [layoutData, accountData] = await Promise.all([
           LayoutService.getAccountLayout(),
-          AccountService.getAccount('1')
+          AccountService.getAccount(DEFAULT_ACCOUNT_ID)
         ]);
 
         setLayout(layoutData);
