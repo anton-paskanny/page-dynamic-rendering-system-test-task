@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { getLayout } from '../services/layoutService';
-import { sendNotFound, sendServerError } from '../utils/httpErrors';
+import type { Layout } from '../../shared/types/layout';
+import { getLayout, updateLayout } from '../services/layoutService';
+import { validateLayout } from '../validation/layoutValidation';
+import { sendNotFound, sendValidationError, sendServerError } from '../utils/httpErrors';
 
 const router = Router();
 
@@ -17,6 +19,23 @@ router.get('/account', (req, res) => {
   } catch (error) {
     console.error('Error fetching layout:', error);
     sendServerError(res, 'Failed to fetch layout data');
+  }
+});
+
+// PUT /api/layouts/account - updates the layout JSON (Constructor page)
+router.put('/account', (req, res) => {
+  try {
+    const validationResult = validateLayout(req.body);
+
+    if (!validationResult.isValid) {
+      return sendValidationError(res, validationResult.errors);
+    }
+
+    const updatedLayout = updateLayout('account', req.body as Layout);
+    res.json(updatedLayout);
+  } catch (error) {
+    console.error('Error updating layout:', error);
+    sendServerError(res, 'Failed to update layout data');
   }
 });
 

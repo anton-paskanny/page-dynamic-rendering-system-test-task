@@ -88,8 +88,7 @@ export const getLayout = (layoutType: LayoutType): Layout | undefined => {
   return layouts.get(layoutType);
 };
 
-// Not yet wired to a route - reserved for the proposed Phase 4 Constructor
-// (PUT /api/layouts/account). See Strategy.md.
+// Backs PUT /api/layouts/account (Constructor page). See Strategy.md.
 export const updateLayout = (layoutType: LayoutType, layout: Layout): Layout => {
   layouts.set(layoutType, layout);
   return layout;

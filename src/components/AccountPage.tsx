@@ -13,14 +13,16 @@ export const AccountPage: FC<AccountPageProps> = ({ layout, accountData, onField
     <div className="account-page">
       <div className="account-container">
         <div className="account-grid">
-          {layout.blocks.map((block) => (
-            <Block
-              key={block.id}
-              block={block}
-              accountData={accountData}
-              onFieldUpdate={onFieldUpdate}
-            />
-          ))}
+          {layout.blocks
+            .filter((block) => !block.hidden)
+            .map((block) => (
+              <Block
+                key={block.id}
+                block={block}
+                accountData={accountData}
+                onFieldUpdate={onFieldUpdate}
+              />
+            ))}
         </div>
       </div>
     </div>

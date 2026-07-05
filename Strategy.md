@@ -1,7 +1,7 @@
-# Strategy Document - Phase 1, 2 & 3 Implementation
+# Strategy Document - Phase 1, 2, 3 & 4 Implementation
 
 ## Overview
-This document outlines the strategy and implementation approach for Phase 1 (Base), Phase 2 (BFF), and Phase 3 (Edit Mode) of the Account page dynamic rendering system.
+This document outlines the strategy and implementation approach for Phase 1 (Base), Phase 2 (BFF), Phase 3 (Edit Mode), and Phase 4 (Constructor) of the Account page dynamic rendering system.
 
 ## Phase 1 - Base (Completed)
 
@@ -164,36 +164,56 @@ Implemented a registry of field types:
 - **Error Handling**: Field-level error display with rollback capability
 - **Keyboard Support**: Full keyboard navigation and shortcuts
 
-## Future Extensibility
+## Phase 4 - Constructor (Completed)
 
-### 1. Phase 4 - Constructor (Proposed, Not Implemented)
+### Requirements Analysis
+- **Goal**: Add a basic page constructor to modify the layout JSON itself.
+- **Constraint**: Structural changes only (reorder, move, rename, add, hide) - no free-form JSX/code edits.
+- **Requirement**: Drag-and-drop reordering of fields within/across blocks and of blocks themselves, plus adding custom fields and renaming/hiding blocks and fields.
+- **Outcome**: Constructor changes are saved via the BFF and reflected on the Account page after reload.
 
-This phase has not been built. The design below is a concrete proposal so the remaining scope/effort is clear to a reviewer.
+### Design Strategy
 
-**Backend**
-- Wire up the already-existing but unused `updateLayout()` in `server/services/layoutService.ts` behind a new `PUT /api/layouts/account` route in `server/routes/layouts.ts`.
-- Add a structural validator for the incoming layout (blocks array shape, required field properties, unique block/field ids) mirroring the pattern already used in `server/validation/accountValidation.ts`.
+#### 1. Routing
+- Added `react-router-dom` with real routes (`/` for the Account page, `/constructor` for the Constructor) rather than an in-app view-toggle, since the task explicitly calls for a "separate page" - this also makes both views bookmarkable/deep-linkable.
+- The pre-existing `App.tsx` fetch/edit logic moved into `src/pages/AccountPageRoute.tsx` unchanged; `App.tsx` is now just the router shell plus a shared `AppNav`.
 
-**Frontend**
-- A new `Constructor` page. The app currently has no router (a single `<App>`); the smallest addition is either a `react-router` route or a simple view-toggle in `App.tsx`.
-- The Constructor loads the layout via the existing `LayoutService`, and lets an admin: reorder fields within a block, move fields across blocks, reorder blocks, add new/custom fields, rename blocks, and toggle field/block visibility.
-- Changes save via the new `PUT /api/layouts/account` endpoint; the Account page picks them up on reload since it already fetches the layout fresh from the BFF.
+#### 2. Backend
+- Wired the already-existing but previously unused `updateLayout()` in `server/services/layoutService.ts` behind a new `PUT /api/layouts/account` route in `server/routes/layouts.ts`.
+- Added `server/validation/layoutValidation.ts`, a structural validator mirroring the pattern in `server/validation/accountValidation.ts`: checks block/field shape, valid `FieldType`/`BlockColor` enum values, `select` fields having non-empty `options` with the value included, and rejects duplicate block/field ids (ids double as PATCH field names and React keys, so they must stay unique).
+- Because `accountValidation.ts` reads the layout live via `getLayout('account')`, any custom field added through the Constructor is automatically PATCH-editable on the Account page with no further backend change.
+- One pragmatic adjustment: the existing boolean-typed fields (`ftd-exists`, `documents-supplied`) store human-readable `"Yes"`/`"No"` strings rather than real booleans (a pre-existing quirk from Phase 1-3, harmless since boolean fields are read-only). The validator accepts both a real boolean and a string for `boolean`-typed fields rather than "fixing" data that's out of this phase's scope.
 
-**Drag and drop**
-- Recommend `@dnd-kit/core` + `@dnd-kit/sortable` over `react-beautiful-dnd` (unmaintained) or raw HTML5 drag-and-drop (weaker accessibility/keyboard support). `dnd-kit` is actively maintained and works well with React 19.
+#### 3. Frontend - Constructor page (`src/pages/constructor/`)
+- `ConstructorPageRoute.tsx` fetches the layout, holds a working copy (`layout`) separate from the last-persisted copy (`savedLayout`), and exposes explicit **Save Layout** / **Discard Changes** actions (Save disabled when the two are equal) - consistent with Phase 3's explicit Save/Cancel pattern rather than autosave.
+- `ConstructorBlock.tsx` / `ConstructorField.tsx` render sortable rows with a drag handle, an eye-icon visibility toggle, and (for blocks) an editable title input.
+- `AddFieldForm.tsx` lets an admin add a field (label, type, options for `select`, editable/required flags) to a specific block; `idUtils.ts` slugifies the label into an id and de-duplicates it against every existing field id in the layout.
+- `hidden?: boolean` was added to both `Field` and `Block` in `shared/types/layout.ts`. `AccountPage.tsx`/`Block.tsx` filter out hidden blocks/fields when rendering the live page; the Constructor still shows them (dimmed) so they can be un-hidden.
 
-### 2. Advanced Features
+#### 4. Drag and drop
+- Chose `@dnd-kit/core` + `@dnd-kit/sortable` over `react-beautiful-dnd` (unmaintained) or raw HTML5 drag-and-drop (weaker accessibility/keyboard support); `dnd-kit` works well with React 19.
+- A single `DndContext` in `ConstructorPageRoute.tsx` handles both drag kinds, disambiguated via `active.data.current.type`: blocks form one top-level `SortableContext`; each block's fields are their own nested `SortableContext` plus a `useDroppable` container so a field can be dropped into a different (or empty) block. This is dnd-kit's standard "multiple containers" pattern - `onDragOver` moves the field between blocks for a live preview, `onDragEnd` settles the final order.
+
+### Key Design Decisions
+- **Explicit Save/Discard over autosave**: matches the Phase 3 mental model (nothing is persisted until the user confirms) and avoids surprising an admin mid-edit with partial network failures.
+- **Structural-only Constructor**: field *values* are still edited only on the Account page via the existing PATCH flow; the Constructor edits layout structure (order, grouping, labels, visibility, new field definitions), keeping the two concerns cleanly separated.
+- **Live layout validation reused across both endpoints**: `PATCH /api/accounts/:id`'s editability/options checks derive from the same in-memory layout the Constructor writes to, so the two never drift out of sync.
+
+## Advanced Features (Not Implemented)
 - **Bulk Updates**: Multiple field updates in single request
 - **Real-time Sync**: WebSocket integration for live updates
 - **Field Dependencies**: Conditional field editing based on other fields
 - **Audit Trail**: Track all field changes with timestamps
 
 ## Testing Strategy
-- **Manual Testing**: Layout changes, API endpoints, edit functionality
-- **API Testing**: curl commands for all endpoints
-- **Validation Testing**: Field updates and error cases
-- **Integration Testing**: Frontend-backend communication
-- **User Experience Testing**: Edit mode workflow and feedback
+- **Automated (Vitest)**: `npm test` runs 48 tests -
+  - `server/validation/*.test.ts` - field-level and layout-structural validation rules, including the boolean-read-only and duplicate-id edge cases, against both the real in-memory layout and small fixtures.
+  - `server/routes/*.test.ts` - the BFF endpoints end-to-end via Supertest against the real Express app (no mocking of Express), restoring in-memory state after mutating tests so files stay order-independent.
+  - `src/components/AccountPage.test.tsx` - a guardrail proving rendering order (and hidden-block/field filtering) comes entirely from the layout JSON, not JSX.
+  - `src/components/EditableField.test.tsx` - the click-to-edit / Save / Cancel interaction contract from Phase 3.
+  - Deliberately not covered: Constructor drag-and-drop (dnd-kit's pointer-sensor interactions are expensive to simulate for the value they'd add) and the thin API-client wrapper classes - left to manual/`test-bff.sh` testing.
+- **Manual Testing**: Layout changes, Constructor drag-and-drop, edit functionality
+- **API Testing**: curl commands for all endpoints (`test-bff.sh`)
 
 ## Success Criteria
 
@@ -222,11 +242,20 @@ This phase has not been built. The design below is a concrete proposal so the re
 ✅ Visual feedback and clear indicators
 ✅ Responsive design for all screen sizes
 
+### Phase 4 ✅
+✅ Separate Constructor page edits the layout JSON
+✅ Drag and drop reorders fields within a block and moves fields across blocks
+✅ Drag and drop reorders blocks
+✅ Adding new/custom fields, renaming blocks, and toggling visibility all work
+✅ Layout changes persist via `PUT /api/layouts/account`
+✅ Constructor changes are reflected on the Account page after reload
+✅ Reordering and adding fields works without changing JSX
+
 ## Architecture Benefits
 - **Separation of Concerns**: Clear boundaries between frontend, backend, and data
 - **API-First Design**: Clean REST endpoints for future integrations
 - **Validation Layer**: Ensures data integrity and security across all layers
 - **Type Safety**: Consistent typing across frontend and backend
-- **Extensible Design**: Ready for Phase 4 and advanced features
+- **Extensible Design**: Layout structure and account data can now both be edited end-to-end without touching JSX
 - **User Experience**: Professional editing interface with immediate feedback
 - **Performance**: Optimistic updates with efficient error handling

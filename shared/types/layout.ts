@@ -29,6 +29,8 @@ export interface Field {
   options?: string[]; // For select fields
   required?: boolean;
   editable?: boolean;
+  // Hidden fields stay in the layout JSON but are skipped when rendering the Account page.
+  hidden?: boolean;
 }
 
 export interface Block {
@@ -36,6 +38,8 @@ export interface Block {
   title: string;
   color: BlockColor;
   fields: Field[];
+  // Hidden blocks stay in the layout JSON but are skipped when rendering the Account page.
+  hidden?: boolean;
 }
 
 export interface Layout {

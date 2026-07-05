@@ -17,6 +17,8 @@ const DOT_CLASS_BY_COLOR: Record<BlockColor, string> = {
 };
 
 export const Block: React.FC<BlockProps> = ({ block, accountData, onFieldUpdate }) => {
+  const visibleFields = block.fields.filter((field) => !field.hidden);
+
   return (
     <section className="card">
       <header className="card-header">
@@ -27,14 +29,14 @@ export const Block: React.FC<BlockProps> = ({ block, accountData, onFieldUpdate 
       </header>
       <div className="card-content">
         <div className="info-list">
-          {block.fields.map((field, index) => (
+          {visibleFields.map((field, index) => (
             <div key={field.id}>
               <EditableField
                 field={field}
                 currentValue={accountData[field.id] ?? field.value}
                 onSave={onFieldUpdate}
               />
-              {index < block.fields.length - 1 && <div className="border-bottom" />}
+              {index < visibleFields.length - 1 && <div className="border-bottom" />}
             </div>
           ))}
         </div>
