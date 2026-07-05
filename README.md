@@ -4,6 +4,10 @@ An Account page whose layout is driven entirely by a JSON config, served by a sm
 
 See [Strategy.md](./Strategy.md) for the AI-assisted design/implementation approach, [README_CORE.md](./README_CORE.md) for the original task brief, and [README_BFF.md](./README_BFF.md) for BFF endpoint details.
 
+## Demo
+
+![Demo of the app: dynamic Account page rendering, inline editing, and the drag-and-drop Constructor](./demo-720.gif)
+
 ## Status
 
 | Phase | Description | Status |
